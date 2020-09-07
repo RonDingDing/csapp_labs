@@ -1,0 +1,25 @@
+version: '3.4'
+services:
+  lab:
+    restart: unless-stopped
+    image: lab:latest
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+      target: base
+    container_name: lab
+    working_dir: /src/
+    command: /bin/sh -c "sleep 1d"
+    volumes:
+      - ./:/src/      
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: '1'
+    #       memory: 512M
+    #     reservations:
+    #       cpus: '0.25'
+    #       memory: 20M
+
+ 
+ 

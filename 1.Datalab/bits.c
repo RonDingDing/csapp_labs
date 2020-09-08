@@ -143,7 +143,7 @@ NOTES:
  *   Rating: 1
  */
 int bitXor(int x, int y) {
-  return 2;
+  return (~(x & y)) & (~((~x) & (~y)));
 }
 /* 
  * tmin - return minimum two's complement integer 
@@ -152,8 +152,8 @@ int bitXor(int x, int y) {
  *   Rating: 1
  */
 int tmin(void) {
-
-  return 2;
+// 因为题目默认32位，所以左移 31 位
+  return 0x1 << 31;
 
 }
 //2
@@ -165,7 +165,8 @@ int tmin(void) {
  *   Rating: 1
  */
 int isTmax(int x) {
-  return 2;
+    // 0x 7f 是 0b 0111 1111，因为题目默认 32 位，所以左移 32 - 8 位得到 0111 1111 ……，然后若 z ^ y = 0，z = y，取逻辑 ! 值得到 1 。
+  return !(x ^ 0x7fffffff);
 }
 /* 
  * allOddBits - return 1 if all odd-numbered bits in word set to 1
@@ -176,7 +177,8 @@ int isTmax(int x) {
  *   Rating: 2
  */
 int allOddBits(int x) {
-  return 2;
+    // 奇数位都是1，最右一位为第0位，单看最后四位，得 x & 1010 == 1010，然后若 z ^ y = 0，z = y，取逻辑 ! 值得到 1 。
+  return !(0xAAAAAAAA ^ (x & 0xAAAAAAAA));
 }
 /* 
  * negate - return -x 
@@ -186,7 +188,7 @@ int allOddBits(int x) {
  *   Rating: 2
  */
 int negate(int x) {
-  return 2;
+  return ~x + 1;
 }
 //3
 /* 
@@ -199,7 +201,11 @@ int negate(int x) {
  *   Rating: 3
  */
 int isAsciiDigit(int x) {
-  return 2;
+    // 0x30到0x39的数x满足，x-0x30的符号位为0，0x39-x的符号位为0
+  int sign = 1<<31;
+  int lower = !((x + ~0x30 + 1) & sign);
+  int upper = !((0x39 + ~x + 1) & sign);
+  return lower & upper;
 }
 /* 
  * conditional - same as x ? y : z 
@@ -209,7 +215,11 @@ int isAsciiDigit(int x) {
  *   Rating: 3
  */
 int conditional(int x, int y, int z) {
-  return 2;
+    // 若 x == 0，mask =  0；即 0000 0000 ……，相反数 dusk 为 1111 1111 ……， (y & mask) | (z & task) = (y & -1) | (z & 0) = y;
+    // 若 x != 0，mask = -1；即 1111 1111 ……，相反数 dusk 为 0000 0000 ……， (y & mask) | (z & task) = (y & 0) | (z & -1) = z;
+  int mask = ~(!!(x ^ 0)) + 1;
+  int dusk = ~mask;
+  return (y & mask) | (z & dusk);
 }
 /* 
  * isLessOrEqual - if x <= y  then return 1, else return 0 

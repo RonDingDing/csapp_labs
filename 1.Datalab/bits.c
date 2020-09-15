@@ -143,7 +143,7 @@ NOTES:
  */
 int bitXor(int x, int y)
 {
-  return (~(x & y)) & (~((~x) & (~y)));
+    return (~(x & y)) & (~((~x) & (~y)));
 }
 /* 
  * tmin - return minimum two's complement integer 
@@ -153,12 +153,10 @@ int bitXor(int x, int y)
  */
 int tmin(void)
 {
-  // 因为题目默认32位，所以左移 31 位
-  return 0x1 << 31;
-}
-//2
+    // 因为题目默认32位，所以左移 31 位
+    return 0x1 << 31;
+} //2
 /*
- * isTmax - returns 1 if x is the maximum, two's complement number,
  *     and 0 otherwise 
  *   Legal ops: ! ~ & ^ | +
  *   Max ops: 10
@@ -166,8 +164,8 @@ int tmin(void)
  */
 int isTmax(int x)
 {
-  // 0x 7f 是 0b 0111 1111，因为题目默认 32 位，所以左移 32 - 8 位得到 0111 1111 ……，然后若 z ^ y = 0，z = y，取逻辑 ! 值得到 1 。
-  return !(x ^ 0x7fffffff);
+    // 0x 7f 是 0b 0111 1111，因为题目默认 32 位，所以左移 32 - 8 位得到 0111 1111 ……，然后若 z ^ y = 0，z = y，取逻辑 ! 值得到 1 。
+    return !(x ^ 0x7fffffff);
 }
 /* 
  * allOddBits - return 1 if all odd-numbered bits in word set to 1
@@ -179,8 +177,8 @@ int isTmax(int x)
  */
 int allOddBits(int x)
 {
-  // 奇数位都是1，最右一位为第0位，单看最后四位，得 x & 1010 == 1010，然后若 z ^ y = 0，z = y，取逻辑 ! 值得到 1 。
-  return !(0xAAAAAAAA ^ (x & 0xAAAAAAAA));
+    // 奇数位都是1，最右一位为第0位，单看最后四位，得 x & 1010 == 1010，然后若 z ^ y = 0，z = y，取逻辑 ! 值得到 1 。
+    return !(0xAAAAAAAA ^ (x & 0xAAAAAAAA));
 }
 /* 
  * negate - return -x 
@@ -191,7 +189,7 @@ int allOddBits(int x)
  */
 int negate(int x)
 {
-  return ~x + 1;
+    return ~x + 1;
 }
 //3
 /* 
@@ -205,11 +203,11 @@ int negate(int x)
  */
 int isAsciiDigit(int x)
 {
-  // 0x30到0x39的数x满足，x-0x30的符号位为0，0x39-x的符号位为0
-  int sign = 1 << 31;
-  int lower = !((x + ~0x30 + 1) & sign);
-  int upper = !((0x39 + ~x + 1) & sign);
-  return lower & upper;
+    // 0x30到0x39的数x满足，x-0x30的符号位为0，0x39-x的符号位为0
+    int sign = 1 << 31;
+    int lower = !((x + ~0x30 + 1) & sign);
+    int upper = !((0x39 + ~x + 1) & sign);
+    return lower & upper;
 }
 /* 
  * conditional - same as x ? y : z 
@@ -220,11 +218,11 @@ int isAsciiDigit(int x)
  */
 int conditional(int x, int y, int z)
 {
-  // 若 x == 0，mask =  0；即 0000 0000 ……，相反数 dusk 为 1111 1111 ……， (y & mask) | (z & task) = (y & -1) | (z & 0) = y;
-  // 若 x != 0，mask = -1；即 1111 1111 ……，相反数 dusk 为 0000 0000 ……， (y & mask) | (z & task) = (y & 0) | (z & -1) = z;
-  int mask = ~(!!(x ^ 0)) + 1;
-  int dusk = ~mask;
-  return (y & mask) | (z & dusk);
+    // 若 x == 0，mask =  0；即 0000 0000 ……，相反数 dusk 为 1111 1111 ……， (y & mask) | (z & task) = (y & -1) | (z & 0) = y;
+    // 若 x != 0，mask = -1；即 1111 1111 ……，相反数 dusk 为 0000 0000 ……， (y & mask) | (z & task) = (y & 0) | (z & -1) = z;
+    int mask = ~(!!x) + 1;
+    int dusk = ~mask;
+    return (y & mask) | (z & dusk);
 }
 /* 
  * isLessOrEqual - if x <= y  then return 1, else return 0 
@@ -235,15 +233,15 @@ int conditional(int x, int y, int z)
  */
 int isLessOrEqual(int x, int y)
 {
-  int negX = ~x + 1;                                            //-x
-  int addX = negX + y;                                          //y-x
-  int checkSign = addX >> 31 & 1;                               //y-x的符号
-  int leftBit = 1 << 31;                                        //最大位为1的32位有符号数
-  int xLeft = x & leftBit;                                      //x的符号
-  int yLeft = y & leftBit;                                      //y的符号
-  int bitXor = xLeft ^ yLeft;                                   //x和y符号相同标志位，相同为0不同为1
-  bitXor = (bitXor >> 31) & 1;                                  //符号相同标志位格式化为0或1
-  return ((!bitXor) & (!checkSign)) | (bitXor & (xLeft >> 31)); //返回1有两种情况：符号相同标志位为0（相同）位与 y-x 的符号为0（y-x>=0）结果为1；符号相同标志位为1（不同）位与x的符号位为1（x<0）
+    int x_sign = (x & (1 << 31)) >> 31;
+    int y_sign = (y & (1 << 31)) >> 31;
+    int diff_sign = !!(x_sign ^ y_sign);
+    int same_sign = !(x_sign ^ y_sign);
+    int y_minus_x = y + ~x + 1;
+    int y_minus_x_greater_0 = !(y_minus_x >> 31);
+    int x_equals_y = !(x ^ y);
+    // 不同符号时，x 为负；同符号时，y - x 为正或 x ^ y == 0
+    return (diff_sign & x_sign & 1) | (same_sign & (y_minus_x_greater_0 | x_equals_y));
 }
 //4
 /* 
@@ -256,8 +254,10 @@ int isLessOrEqual(int x, int y)
  */
 int logicalNeg(int x)
 {
-
-  return ((x | (~x + 1)) >> 31) + 1;
+    // 非零值 | 自身的相反数，会得到全 1 的结果，+ 1 会得 0；零值 | 自身的相反数，会得 0， + 1 得 1；
+    int minus = ~x + 1;
+    int have = x | minus;
+    return (have >> 31) + 1;
 }
 /* howManyBits - return the minimum number of bits required to represent x in
  *             two's complement
@@ -273,23 +273,21 @@ int logicalNeg(int x)
  */
 int howManyBits(int x)
 {
-  int b16, b8, b4, b2, b1, b0;
-  int sign = x >> 31;
-  x = (sign & ~x) | (~sign & x); //如果x为正则不变，否则按位取反（这样好找最高位为1的，原来是最高位为0的，这样也将符号位去掉了）
-
-  // 不断缩小范围
-  b16 = !!(x >> 16) << 4; //高十六位是否有1
-  x = x >> b16;           //如果有（至少需要16位），则将原数右移16位
-  b8 = !!(x >> 8) << 3;   //剩余位高8位是否有1
-  x = x >> b8;            //如果有（至少需要16+8=24位），则右移8位
-  b4 = !!(x >> 4) << 2;   //同理
-  x = x >> b4;
-  b2 = !!(x >> 2) << 1;
-  x = x >> b2;
-  b1 = !!(x >> 1);
-  x = x >> b1;
-  b0 = x;
-  return b16 + b8 + b4 + b2 + b1 + b0 + 1; //+1表示加上符号位F
+    int sign = x >> 31;
+    x = (sign & ~x) | (~sign & x); //如果x为负则不变，否则按位取反（原来是最高位为0的都变成最高位为1）
+    // 不断缩小范围
+    int b16 = !!(x >> 16) << 4; //高十六位是否有0
+    x = x >> b16;               //如果有（至少需要16位），则将原数右移16位
+    int b8 = !!(x >> 8) << 3;   //剩余位高8位是否有0
+    x = x >> b8;                //如果有（至少需要16+8=24位），则右移8位
+    int b4 = !!(x >> 4) << 2;   //同理
+    x = x >> b4;
+    int b2 = !!(x >> 2) << 1;
+    x = x >> b2;
+    int b1 = !!(x >> 1);
+    x = x >> b1;
+    int b0 = x;
+    return b16 + b8 + b4 + b2 + b1 + b0 + 1; //+1表示加上符号位
 }
 //float
 /* 
@@ -305,17 +303,23 @@ int howManyBits(int x)
  */
 unsigned floatScale2(unsigned uf)
 {
-  int sign_inplace = uf & (1 << 31); // 符号位
-  int exp = (uf & 0x7f800000) >> 23; // 0b 0111 1111 1000 0000 0000 0000 0000 0000 根据IEEE浮点数定义获得 exp 八位
-  if (exp == 0)
-    return uf << 1 | sign_inplace; // 无穷小（非规格化），左移保留符号即可。
-  if (exp == 255)
-    return uf;       // 无穷大或 Nan，返回本身
-  int new_exp = exp + 1; // 规格化，exp + 1 代表 * 2
-  if (new_exp == 255)
-    return 0x7f800000 | sign_inplace; // 若此时 new_exp 全为 1，返回带符号的无穷大
+    int sign_inplace = uf & (1 << 31); // 符号位
+    int exp = (uf & 0x7f800000) >> 23; // 0b 0111 1111 1000 0000 0000 0000 0000 0000 根据IEEE浮点数定义获得 exp 八位
+    if (exp == 0)
+    {
+        return uf << 1 | sign_inplace; // 无穷小（非规格化），左移保留符号即可。
+    }
+    if (exp == 0xff)
+    {
+        return uf;
+    }                      // 无穷大或 Nan，返回本身
+    int new_exp = exp + 1; // 规格化，exp + 1 代表 * 2
+    if (new_exp == 0xff)
+    {
+        return 0x7f800000 | sign_inplace; // 若此时 new_exp 全为 1，返回带符号的无穷大
+    }
 
-  return (uf & 0x807fffff) | (new_exp << 23) ; // 0b 1000 0000 0111 1111 1111 1111 1111 1111 挖空原来的 exp，填入 new_exp
+    return (uf & 0x807fffff) | (new_exp << 23); // 0b 1000 0000 0111 1111 1111 1111 1111 1111 挖空原来的 exp，填入 new_exp
 }
 /* 
  * floatFloat2Int - Return bit-level equivalent of expression (int) f
@@ -331,7 +335,17 @@ unsigned floatScale2(unsigned uf)
  */
 int floatFloat2Int(unsigned uf)
 {
-  return 2;
+    // 这题只需考虑规格化即可，非规格化都小于 1。
+    int sign = uf & (1 << 31);
+    int E = ((uf & 0x7f800000) >> 23) - 127; // 取 E = e - bias，bias 为 127
+    // 越界
+    if (E > 31)
+        return 0x80000000;
+    if (E < 0)
+        return 0;
+    int M = (uf & 0x007fffff) | 0x00800000; // M = 1 + f
+    int f = (E > 23) ? (M << (E - 23)) : (M >> (23 - E));
+    return sign ? -f : f;
 }
 /* 
  * floatPower2 - Return bit-level equivalent of the expression 2.0^x
@@ -348,5 +362,16 @@ int floatFloat2Int(unsigned uf)
  */
 unsigned floatPower2(int x)
 {
-  return 2;
+    // 非规格化 E = 1 - bias = 1 - 127 = -126 小于这个数不行
+    // 规格化 E 最大值为 255 否则就是无穷了
+    int exp = x + 127;
+    if (exp <= 0)
+    {
+        return 0;
+    }
+    else if (exp >= 255)
+    {
+        return 0x7f800000; // INF
+    }
+    return exp << 23;
 }
